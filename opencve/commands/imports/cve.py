@@ -32,12 +32,12 @@ def run():
     task_id = task.id
 
     for year in range(CVE_FIRST_YEAR, CURRENT_YEAR + 1):
-        header("Importing CVE for {}".format(year))
-        mappings.update({"cves": [], "changes": []})
+        header(f"Importing CVE for {year}")
+        mappings |= {"cves": [], "changes": []}
 
         # Download the file
         url = NVD_CVE_URL.format(year=year)
-        with timed_operation("Downloading {}...".format(url)):
+        with timed_operation(f"Downloading {url}..."):
             resp = requests.get(url).content
 
         # Parse the XML elements
@@ -119,7 +119,7 @@ def run():
             db.session.bulk_insert_mappings(Change, mappings["changes"])
             db.session.commit()
 
-        info("{} CVE imported.".format(len(mappings["cves"])))
+        info(f'{len(mappings["cves"])} CVE imported.')
 
         # Free the memory after each processed year
         del mappings["cves"]

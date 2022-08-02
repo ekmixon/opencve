@@ -10,10 +10,10 @@ def convert_cpes(conf):
     This function takes an object, extracts its CPE uris and transforms them into
     a dictionnary representing the vendors with their associated products.
     """
-    uris = nested_lookup("cpe23Uri", conf) if not isinstance(conf, list) else conf
+    uris = conf if isinstance(conf, list) else nested_lookup("cpe23Uri", conf)
 
     # Create a list of tuple (vendor, product)
-    cpes_t = list(set([tuple(uri.split(":")[3:5]) for uri in uris]))
+    cpes_t = list({tuple(uri.split(":")[3:5]) for uri in uris})
 
     # Transform it into nested dictionnary
     cpes = {}
@@ -32,8 +32,7 @@ def flatten_vendors(vendors):
     data = []
     for vendor, products in vendors.items():
         data.append(vendor)
-        for product in products:
-            data.append(f"{vendor}{PRODUCT_SEPARATOR}{product}")
+        data.extend(f"{vendor}{PRODUCT_SEPARATOR}{product}" for product in products)
     return data
 
 
@@ -41,7 +40,7 @@ def get_cwes(problems):
     """
     Takes a list of problems and return the CWEs ID.
     """
-    return list(set([p["value"] for p in problems]))
+    return list({p["value"] for p in problems})
 
 
 def get_cwes_details(problems):
@@ -52,8 +51,7 @@ def get_cwes_details(problems):
     cwes = {}
     for cwe_id in get_cwes(problems):
         cwes[cwe_id] = None
-        cwe = Cwe.query.filter_by(cwe_id=cwe_id).first()
-        if cwe:
+        if cwe := Cwe.query.filter_by(cwe_id=cwe_id).first():
             cwes[cwe_id] = cwe.name
     return cwes
 

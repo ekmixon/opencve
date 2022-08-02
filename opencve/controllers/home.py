@@ -58,7 +58,7 @@ def home():
 
     # Handle the page parameter
     page = request.args.get("page", type=int, default=1)
-    page = 1 if page < 1 else page
+    page = max(page, 1)
     per_page = app.config["ACTIVITIES_PER_PAGE"]
 
     # Only display the 5 last reports

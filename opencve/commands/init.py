@@ -16,27 +16,23 @@ from opencve.commands import info, error
 
 
 def create_config():
-    if not pathlib.Path(OPENCVE_CONFIG).exists():
+    if pathlib.Path(OPENCVE_CONFIG).exists():
+        return OPENCVE_CONFIG, False
+    # Do not create the home if user directly specifies the config path
+    if not os.environ.get("OPENCVE_CONFIG"):
+        pathlib.Path(OPENCVE_HOME).mkdir(parents=True, exist_ok=True)
 
-        # Do not create the home if user directly specifies the config path
-        if not os.environ.get("OPENCVE_CONFIG"):
-            pathlib.Path(OPENCVE_HOME).mkdir(parents=True, exist_ok=True)
+    conf = pathlib.Path(DEFAULT_CONFIG).read_text()
+    # Generate a unique secret key
+    conf = conf.replace("{SECRET_KEY}", os.urandom(32).hex())
 
-        with open(DEFAULT_CONFIG) as f:
-            conf = f.read()
+    with open(OPENCVE_CONFIG, "w") as f:
+        f.write(conf)
 
-        # Generate a unique secret key
-        conf = conf.replace("{SECRET_KEY}", os.urandom(32).hex())
+    # Copy the welcome files
+    shutil.copytree(DEFAULT_WELCOME_FILES, OPENCVE_WELCOME_FILES)
 
-        with open(OPENCVE_CONFIG, "w") as f:
-            f.write(conf)
-
-        # Copy the welcome files
-        shutil.copytree(DEFAULT_WELCOME_FILES, OPENCVE_WELCOME_FILES)
-
-        return OPENCVE_CONFIG, True
-
-    return OPENCVE_CONFIG, False
+    return OPENCVE_CONFIG, True
 
 
 @click.command()

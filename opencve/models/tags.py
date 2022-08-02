@@ -24,7 +24,7 @@ class UserTag(BaseModel):
     )
 
     def __repr__(self):
-        return "<UserTag {}>".format(self.id)
+        return f"<UserTag {self.id}>"
 
 
 class CveTag(BaseModel):
@@ -42,4 +42,4 @@ class CveTag(BaseModel):
     __table_args__ = (db.Index("ix_cves_tags", tags, postgresql_using="gin"),)
 
     def __repr__(self):
-        return "<CveTag {}>".format(self.id)
+        return f"<CveTag {self.id}>"

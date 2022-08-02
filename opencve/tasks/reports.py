@@ -25,12 +25,10 @@ def get_users_with_alerts():
 
     if time(11, 0) <= now.time() <= time(11, 15):
         logger.info("We are between 11:00 AM and 11:15 AM, get all the users...")
-        users = query.all()
+        return query.all()
     else:
         logger.info("Get the users who want to always receive email...")
-        users = query.filter(User.frequency_notifications == "always").all()
-
-    return users
+        return query.filter(User.frequency_notifications == "always").all()
 
 
 def get_top_alerts(user, count=10):
@@ -80,9 +78,7 @@ def get_sorted_alerts(alerts):
     # For each vendor, we take the max score
     for k, als in alerts_sorted.items():
 
-        # Get the max score
-        cvss = [al.cve.cvss3 for al in als["alerts"] if al.cve.cvss3]
-        if cvss:
+        if cvss := [al.cve.cvss3 for al in als["alerts"] if al.cve.cvss3]:
             alerts_sorted[k]["max"] = max(cvss)
 
     alerts_sorted = OrderedDict(
@@ -130,11 +126,11 @@ def handle_reports():
 
     # Get alerts for all users, create a report containing it
     # and send a mail with the top alerts.
-    logger.info("Checking {} users with alerts to send...".format(len(users)))
+    logger.info(f"Checking {len(users)} users with alerts to send...")
 
     for user in users:
         alerts = Alert.query.filter_by(user=user, notify=False).all()
-        logger.info("{} alerts to notify for {}".format(len(alerts), user.username))
+        logger.info(f"{len(alerts)} alerts to notify for {user.username}")
 
         top_alerts = get_top_alerts(user)
         sorted_alerts = get_sorted_alerts(top_alerts)
@@ -149,10 +145,9 @@ def handle_reports():
 
         if not user.enable_notifications:
             logger.info(
-                "User {} do not want to receive email notifications, skip it.".format(
-                    user.username
-                )
+                f"User {user.username} do not want to receive email notifications, skip it."
             )
+
         else:
             alert_str = "alerts" if len(alerts) > 1 else "alert"
             subject = "{count} {alerts} on {vendors}".format(
@@ -170,7 +165,7 @@ def handle_reports():
                         "report_public_link": report.public_link,
                     },
                 )
-                logger.info("Mail sent for {}".format(user.email))
+                logger.info(f"Mail sent for {user.email}")
             except EmailError as e:
                 logger.error(f"EmailError : {e}")
 

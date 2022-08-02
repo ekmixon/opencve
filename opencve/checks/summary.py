@@ -14,13 +14,12 @@ class Summary(BaseCheck):
             self.cve_obj.summary = summary
             db.session.commit()
 
-            # Create a 'summary' event
-            event = CveUtil.create_event(
+            return CveUtil.create_event(
                 self.cve_obj,
                 self.cve_json,
                 "summary",
                 {"old": old, "new": self.cve_obj.summary},
             )
-            return event
+
 
         return None

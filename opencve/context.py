@@ -8,7 +8,7 @@ from opencve.models.tags import UserTag
 
 def _cvss_percent(score):
     percent = score * 100 / 10
-    return "{}%".format(str(percent))
+    return f"{str(percent)}%"
 
 
 def _cvss_bg(score):
@@ -101,10 +101,10 @@ def _excerpt(objects, _type):
     if _type == "products":
         objects = [o for o in objects if PRODUCT_SEPARATOR in o]
     else:
-        objects = [o for o in objects if not PRODUCT_SEPARATOR in o]
+        objects = [o for o in objects if PRODUCT_SEPARATOR not in o]
 
     objects = sorted(objects)
-    output += '<span class="badge badge-primary">{}</span> '.format(len(objects))
+    output += f'<span class="badge badge-primary">{len(objects)}</span> '
 
     # Keep the remains size and reduce the list
     remains = len(objects[app.config["COUNT_EXCERPT"] :])
@@ -129,7 +129,7 @@ def _excerpt(objects, _type):
         output += ", " if idx + 1 != len(objects) and _type != "tags" else " "
 
     if remains:
-        output += "<i>and {} more</i>".format(remains)
+        output += f"<i>and {remains} more</i>"
 
     return output
 
@@ -146,15 +146,9 @@ def _report_excerpt(items):
 
     for idx, item in enumerate(items):
         output += _humanize_filter(item)
-        if idx + 1 != len(items):
-            output += ", "
-        else:
-            output += " "
-
-    remains = len(items_copy[app.config["REPORT_COUNT_EXCERPT"] :])
-
-    if remains:
-        output += "<i>and {} more</i>".format(remains)
+        output += ", " if idx + 1 != len(items) else " "
+    if remains := len(items_copy[app.config["REPORT_COUNT_EXCERPT"] :]):
+        output += f"<i>and {remains} more</i>"
 
     return output
 
@@ -166,15 +160,14 @@ def _is_active(route):
 def _event_excerpt(details):
     if isinstance(details, list):
         return f"<strong>{len(details)}</strong> added"
-    else:
-        output = []
-        if "changed" in details:
-            output.append(f"<strong>{len(details['changed'])}</strong> changed")
-        if "added" in details:
-            output.append(f"<strong>{len(details['added'])}</strong> added")
-        if "removed" in details:
-            output.append(f"<strong>{len(details['removed'])}</strong> removed")
-        return ", ".join(output)
+    output = []
+    if "changed" in details:
+        output.append(f"<strong>{len(details['changed'])}</strong> changed")
+    if "added" in details:
+        output.append(f"<strong>{len(details['added'])}</strong> added")
+    if "removed" in details:
+        output.append(f"<strong>{len(details['removed'])}</strong> removed")
+    return ", ".join(output)
 
 
 def _event_description(code):

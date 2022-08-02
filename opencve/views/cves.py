@@ -112,17 +112,15 @@ def cve_change(cve_id, change_id):
     if not change:
         abort(404)
 
-    previous = (
+    if previous := (
         Change.query.filter(Change.created_at < change.created_at)
         .filter(Change.cve == change.cve)
         .order_by(Change.created_at.desc())
         .first()
-    )
-
-    previous_json = {}
-    if previous:
+    ):
         previous_json = previous.json
-
+    else:
+        previous_json = {}
     differ = CustomHtmlHTML()
     diff = differ.make_table(
         fromlines=json.dumps(previous_json, sort_keys=True, indent=2).split("\n"),

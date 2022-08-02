@@ -8,12 +8,11 @@ from opencve.tasks.events import handle_events
 from opencve.tasks.reports import handle_reports
 
 # Celery Beat configuration
-CELERYBEAT_SCHEDULE = {}
-
-# Periodic CVE check
-CELERYBEAT_SCHEDULE["cve-updates-15-mn"] = {
-    "task": "CVE_UPDATES",
-    "schedule": timedelta(minutes=15),
+CELERYBEAT_SCHEDULE = {
+    "cve-updates-15-mn": {
+        "task": "CVE_UPDATES",
+        "schedule": timedelta(minutes=15),
+    }
 }
 
 

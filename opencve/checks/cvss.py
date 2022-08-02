@@ -26,10 +26,9 @@ class Cvss(BaseCheck):
             self.cve_obj.cvss3 = new.get("v3")
             db.session.commit()
 
-            # Create the event with the CVSS changes
-            event = CveUtil.create_event(
+            return CveUtil.create_event(
                 self.cve_obj, self.cve_json, "cvss", {"old": old, "new": new}
             )
-            return event
+
 
         return None

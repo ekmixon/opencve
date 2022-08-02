@@ -20,4 +20,4 @@ class Product(BaseModel):
         return _humanize_filter(self.name)
 
     def __repr__(self):
-        return "<Product {}>".format(self.name)
+        return f"<Product {self.name}>"

@@ -113,7 +113,7 @@ def test_update_tag(client, login):
         data={"description": "my edited description", "color": "#000000"},
         follow_redirects=True,
     )
-    assert not b"my original description" in response.data
+    assert b"my original description" not in response.data
     assert b"my edited description" in response.data
 
     tag = UserTag.query.first()
@@ -154,8 +154,8 @@ def test_associate_tags(client, login, create_cve, create_tag):
     with client:
         # The CVE has no tag
         response = client.get("/cve/CVE-2018-18074")
-        assert not b">tag1</span>" in response.data
-        assert not b">tag2</span>" in response.data
+        assert b">tag1</span>" not in response.data
+        assert b">tag2</span>" not in response.data
         cve = Cve.query.filter_by(cve_id="CVE-2018-18074").first()
         assert not cve.tags
 
@@ -186,7 +186,7 @@ def test_associate_tags(client, login, create_cve, create_tag):
         )
         assert b"The CVE tags have been updated." in response.data
         assert b">tag1</span>" in response.data
-        assert not b">tag2</span>" in response.data
+        assert b">tag2</span>" not in response.data
         cve = Cve.query.filter_by(cve_id="CVE-2018-18074").first()
         assert len(cve.tags) == 1
         assert cve.tags[0].name == "tag1"
@@ -196,7 +196,7 @@ def test_associate_tags(client, login, create_cve, create_tag):
             "/cve/CVE-2018-18074/tags", data={}, follow_redirects=True
         )
         assert b"The CVE tags have been updated." in response.data
-        assert not b">tag1</span>" in response.data
-        assert not b">tag2</span>" in response.data
+        assert b">tag1</span>" not in response.data
+        assert b">tag2</span>" not in response.data
         cve = Cve.query.filter_by(cve_id="CVE-2018-18074").first()
         assert len(cve.tags) == 0

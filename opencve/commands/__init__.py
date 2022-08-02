@@ -7,11 +7,11 @@ import click
 
 
 def info(msg, nl=True):
-    click.echo("[*] {}".format(msg), nl=nl)
+    click.echo(f"[*] {msg}", nl=nl)
 
 
 def error(msg, nl=True):
-    click.echo("[error] {}".format(msg), nl=nl)
+    click.echo(f"[error] {msg}", nl=nl)
 
 
 def header(msg):
@@ -25,7 +25,7 @@ def timed_operation(msg, nl=False):
     start = time.time()
     info(msg, nl=nl)
     yield
-    click.echo(" (done in {}s).".format(round(time.time() - start, 3)))
+    click.echo(f" (done in {round(time.time() - start, 3)}s).")
 
 
 def ensure_config(f):

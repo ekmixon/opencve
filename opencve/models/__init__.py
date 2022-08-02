@@ -38,7 +38,7 @@ class BaseModel(db.Model):
         return {attr: str(getattr(self, attr)) for attr in attrs}
 
     def __repr__(self):
-        return """<{} '{}'>""".format(self.__class__.__name__, self.id)
+        return f"""<{self.__class__.__name__} '{self.id}'>"""
 
 
 users_vendors = db.Table(

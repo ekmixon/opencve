@@ -25,4 +25,4 @@ class Alert(BaseModel):
     report = db.relationship("Report", back_populates="alerts")
 
     def __repr__(self):
-        return "<Alert {}>".format(self.id)
+        return f"<Alert {self.id}>"

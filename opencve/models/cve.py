@@ -63,7 +63,7 @@ class Cve(BaseModel):
     )
 
     def __repr__(self):
-        return "<Cve {}>".format(self.cve_id)
+        return f"<Cve {self.cve_id}>"
 
     @property
     def raw_tags(self):
@@ -73,19 +73,18 @@ class Cve(BaseModel):
         cve_tag = CveTag.query.filter_by(
             user_id=current_user.id, cve_id=self.id
         ).first()
-        if not cve_tag:
-            return []
-
-        return cve_tag.tags
+        return cve_tag.tags if cve_tag else []
 
     @property
     def tags(self):
-        if not current_user.is_authenticated:
-            return []
-        return [
-            UserTag.query.filter_by(user_id=current_user.id, name=t).first()
-            for t in self.raw_tags
-        ]
+        return (
+            [
+                UserTag.query.filter_by(user_id=current_user.id, name=t).first()
+                for t in self.raw_tags
+            ]
+            if current_user.is_authenticated
+            else []
+        )
 
     @property
     def cvss_weight(self):

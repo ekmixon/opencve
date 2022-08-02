@@ -48,9 +48,7 @@ def report(link):
     # For each vendor, we take the max score
     for k, als in alerts_sorted.items():
 
-        # Get the max score
-        cvss = [al.cve.cvss3 for al in als["alerts"] if al.cve.cvss3]
-        if cvss:
+        if cvss := [al.cve.cvss3 for al in als["alerts"] if al.cve.cvss3]:
             alerts_sorted[k]["max"] = max(cvss)
 
     alerts_sorted = OrderedDict(
@@ -59,7 +57,7 @@ def report(link):
 
     # Some stats
     total_alerts = len(alerts)
-    maximum_score = max([v["max"] for k, v in alerts_sorted.items()])
+    maximum_score = max(v["max"] for k, v in alerts_sorted.items())
 
     return render_template(
         "report.html",

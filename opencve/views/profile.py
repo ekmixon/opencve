@@ -34,15 +34,16 @@ def notifications():
     filters = current_user.filters_notifications or {"event_types": [], "cvss": 0}
     filters_notifications_form = FiltersNotificationForm(
         obj=current_user,
-        new_cve=True if "new_cve" in filters["event_types"] else False,
-        first_time=True if "first_time" in filters["event_types"] else False,
-        references=True if "references" in filters["event_types"] else False,
-        cvss=True if "cvss" in filters["event_types"] else False,
-        cpes=True if "cpes" in filters["event_types"] else False,
-        summary=True if "summary" in filters["event_types"] else False,
-        cwes=True if "cwes" in filters["event_types"] else False,
+        new_cve="new_cve" in filters["event_types"],
+        first_time="first_time" in filters["event_types"],
+        references="references" in filters["event_types"],
+        cvss="cvss" in filters["event_types"],
+        cpes="cpes" in filters["event_types"],
+        summary="summary" in filters["event_types"],
+        cwes="cwes" in filters["event_types"],
         cvss_score=filters["cvss"],
     )
+
 
     if request.method == "POST":
         form_name = request.form["form-name"]
@@ -52,8 +53,9 @@ def notifications():
             and mail_notifications_form.validate()
         ):
             current_user.enable_notifications = (
-                True if mail_notifications_form.enable.data == "yes" else False
+                mail_notifications_form.enable.data == "yes"
             )
+
             current_user.frequency_notifications = (
                 mail_notifications_form.frequency.data
             )
@@ -202,13 +204,10 @@ def delete_tag(tag):
         )
         return redirect(url_for("main.tags"))
 
-    # Confirmation page
     if request.method == "GET":
         return render_template("profiles/delete_tag.html", tag=tag, count=count)
 
-    # Delete the tag
-    else:
-        db.session.delete(tag)
-        db.session.commit()
-        flash(f"The tag {tag.name} has been deleted.", "success")
-        return redirect(url_for("main.tags"))
+    db.session.delete(tag)
+    db.session.commit()
+    flash(f"The tag {tag.name} has been deleted.", "success")
+    return redirect(url_for("main.tags"))

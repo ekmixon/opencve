@@ -76,8 +76,7 @@ def truncate_db_tables(app):
 @pytest.fixture(scope="function")
 def client(app):
     app.test_client_class = CustomClient
-    _client = app.test_client()
-    yield _client
+    yield app.test_client()
 
 
 @pytest.fixture(scope="function")

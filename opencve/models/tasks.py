@@ -9,4 +9,4 @@ class Task(BaseModel):
     changes = db.relationship("Change", back_populates="task")
 
     def __repr__(self):
-        return "<Task {}>".format(self.created_at)
+        return f"<Task {self.created_at}>"

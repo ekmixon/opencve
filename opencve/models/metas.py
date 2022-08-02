@@ -9,4 +9,4 @@ class Meta(BaseModel):
     value = db.Column(db.String(), nullable=False)
 
     def __repr__(self):
-        return "<Meta {}>".format(self.name)
+        return f"<Meta {self.name}>"

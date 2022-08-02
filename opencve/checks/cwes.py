@@ -41,8 +41,6 @@ class Cwes(BaseCheck):
             self.cve_obj.cwes = new
             db.session.commit()
 
-            # Create the event
-            event = CveUtil.create_event(self.cve_obj, self.cve_json, "cwes", payload)
-            return event
+            return CveUtil.create_event(self.cve_obj, self.cve_json, "cwes", payload)
 
         return None

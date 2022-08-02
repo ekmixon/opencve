@@ -101,6 +101,4 @@ def remove_product_separator(s):
 
 @main.app_template_filter("custom_safe")
 def custom_safe(s):
-    if s == EMAIL_CONFIRMATION_MESSAGE:
-        return do_mark_safe(s)
-    return s
+    return do_mark_safe(s) if s == EMAIL_CONFIRMATION_MESSAGE else s

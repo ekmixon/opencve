@@ -17,4 +17,4 @@ class Vendor(BaseModel):
         return _humanize_filter(self.name)
 
     def __repr__(self):
-        return "<Vendor {}>".format(self.name)
+        return f"<Vendor {self.name}>"

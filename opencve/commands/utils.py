@@ -30,7 +30,7 @@ class CveUtil(object):
         db.session.add(event)
         db.session.commit()
 
-        info("Event {} created (ID: {})".format(type, event.id))
+        info(f"Event {type} created (ID: {event.id})")
         return event
 
     @classmethod
@@ -46,7 +46,7 @@ class CveUtil(object):
         db.session.add(change)
         db.session.commit()
 
-        info("Change created (ID: {})".format(change.id))
+        info(f"Change created (ID: {change.id})")
         return change
 
     @classmethod

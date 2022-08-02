@@ -29,6 +29,6 @@ class CweController(BaseController):
                 search = int(search)
                 query = query.filter_by(cwe_id=f"CWE-{search}")
             except ValueError:
-                query = query.filter(Cwe.name.ilike("%{}%".format(search)))
+                query = query.filter(Cwe.name.ilike(f"%{search}%"))
 
         return query, {}

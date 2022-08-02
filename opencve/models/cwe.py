@@ -11,9 +11,7 @@ class Cwe(BaseModel):
 
     @property
     def short_id(self):
-        if not self.cwe_id.startswith("CWE-"):
-            return None
-        return self.cwe_id.split("CWE-")[1]
+        return self.cwe_id.split("CWE-")[1] if self.cwe_id.startswith("CWE-") else None
 
     def __repr__(self):
-        return "<Cwe {}>".format(self.cwe_id)
+        return f"<Cwe {self.cwe_id}>"

@@ -57,7 +57,7 @@ def import_submodules(package, modules_to_import):
 
     for loader, name, is_pkg in pkgutil.walk_packages(package.__path__):
         if not name.startswith("_"):
-            full_name = package.__name__ + "." + name
+            full_name = f"{package.__name__}.{name}"
 
             if any((x in package.__name__ for x in modules_to_import)):
                 results[full_name] = importlib.import_module(full_name)
@@ -66,7 +66,7 @@ def import_submodules(package, modules_to_import):
                 results[full_name] = importlib.import_module(full_name)
 
             if is_pkg and name in modules_to_import:
-                results.update(import_submodules(full_name, modules_to_import))
+                results |= import_submodules(full_name, modules_to_import)
     return results
 
 

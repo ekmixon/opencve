@@ -42,7 +42,7 @@ def test_has_not_changed(mock_get, open_raw_file, handle_events):
     # The sha256 has changed
     meta, sha256 = has_changed()
     assert meta.value == value
-    assert sha256 == None
+    assert sha256 is None
 
 
 @patch("opencve.tasks.events.requests.get")

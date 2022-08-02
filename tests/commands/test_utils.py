@@ -82,8 +82,8 @@ def test_create_event(app, open_file):
     assert event.review == False
     assert event.cve_id == cve.id
     assert event.cve.id == cve.id
-    assert event.change == None
-    assert event.change_id == None
+    assert event.change is None
+    assert event.change_id is None
     assert event.alerts == []
 
 

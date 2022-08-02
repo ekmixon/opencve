@@ -47,8 +47,6 @@ class Cpes(BaseCheck):
                         db.session.add(p_obj)
                         db.session.commit()
 
-            # Create the event
-            event = CveUtil.create_event(self.cve_obj, self.cve_json, "cpes", payload)
-            return event
+            return CveUtil.create_event(self.cve_obj, self.cve_json, "cpes", payload)
 
         return None

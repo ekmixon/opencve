@@ -69,7 +69,7 @@ class User(BaseModel, UserMixin):
         return bool(self.email_confirmed_at)
 
     def __repr__(self):
-        return "<User {}>".format(self.username)
+        return f"<User {self.username}>"
 
     def __eq__(self, user):
         return self.id == user.id if user else False

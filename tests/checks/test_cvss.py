@@ -63,5 +63,5 @@ def test_check_cvss_removed(create_cve, handle_events, open_file):
     }
 
     cve = Cve.query.filter_by(cve_id="CVE-2020-35188").first()
-    assert cve.cvss2 == None
-    assert cve.cvss3 == None
+    assert cve.cvss2 is None
+    assert cve.cvss3 is None

@@ -19,7 +19,7 @@ def run():
     header("Importing CWE list...")
 
     # Download the file
-    with timed_operation("Downloading {}...".format(MITRE_CWE_URL)):
+    with timed_operation(f"Downloading {MITRE_CWE_URL}..."):
         resp = requests.get(MITRE_CWE_URL).content
 
     # Parse weaknesses
@@ -48,5 +48,5 @@ def run():
         db.session.bulk_insert_mappings(Cwe, cwes.values())
         db.session.commit()
 
-    info("{} CWE imported.".format(len(cwes)))
+    info(f"{len(cwes)} CWE imported.")
     del cwes

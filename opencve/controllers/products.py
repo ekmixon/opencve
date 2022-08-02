@@ -33,7 +33,7 @@ class ProductController(BaseController):
                 .replace("_", "")
                 .replace(" ", "_")
             )
-            query = query.filter(Product.name.like("%{}%".format(search)))
+            query = query.filter(Product.name.like(f"%{search}%"))
 
         return query, {}
 

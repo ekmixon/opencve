@@ -20,7 +20,7 @@ def filter_events(user, events):
     }
 
     # Check if new vendors/products match the user's subscriptions
-    if "first_time" in filtered_events.keys():
+    if "first_time" in filtered_events:
 
         # TODO: refactor with controllers.home::home (+tests)
         subscriptions = [v.name for v in user.vendors]
@@ -28,7 +28,10 @@ def filter_events(user, events):
             [f"{p.vendor.name}{PRODUCT_SEPARATOR}{p.name}" for p in user.products]
         )
 
-        if not any(s in filtered_events["first_time"].details for s in subscriptions):
+        if all(
+            s not in filtered_events["first_time"].details
+            for s in subscriptions
+        ):
             del filtered_events["first_time"]
 
     return list(filtered_events.values())
@@ -47,14 +50,12 @@ def handle_alerts():
         return
 
     # Check each CVE, get its events and create alerts
-    logger.info("Checking {} CVE containing event(s) no reviewed...".format(len(cves)))
+    logger.info(f"Checking {len(cves)} CVE containing event(s) no reviewed...")
 
     for cve in cves:
         users = {}
         events = Event.query.filter_by(cve=cve, review=False).all()
-        logger.info(
-            "{} contains {} events to review...".format(cve.cve_id, len(events))
-        )
+        logger.info(f"{cve.cve_id} contains {len(events)} events to review...")
 
         # Save the subscribers for each vendor of the CVE
         for v in cve.vendors:
@@ -89,7 +90,7 @@ def handle_alerts():
             continue
 
         # Users need to be alerted
-        logger.info("{} users found, creating the alerts...".format(len(users)))
+        logger.info(f"{len(users)} users found, creating the alerts...")
 
         for user, details in users.items():
 
@@ -106,13 +107,7 @@ def handle_alerts():
 
             # Keep the wanted filter by user
             events_copy = list(events)
-            events_copy = filter_events(user, events_copy)
-
-            if not events_copy:
-                logger.info(
-                    "No event matches the filters for {0}".format(user.username)
-                )
-            else:
+            if events_copy := filter_events(user, events_copy):
                 logger.info(
                     "Events match for {0} ({1})".format(
                         user.username, ",".join(e.type.code for e in events_copy)
@@ -130,10 +125,12 @@ def handle_alerts():
                 db.session.add(alert)
                 db.session.commit()
 
-                logger.info(
-                    "Alert created for {} (ID: {})".format(user.username, alert.id)
-                )
+                logger.info(f"Alert created for {user.username} (ID: {alert.id})")
 
+            else:
+                logger.info(
+                    "No event matches the filters for {0}".format(user.username)
+                )
         # We can review the events
         for event in events:
             event.review = True

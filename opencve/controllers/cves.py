@@ -84,7 +84,7 @@ class CveController(BaseController):
             "critical",
         ]:
             if args.get("cvss").lower() == "none":
-                query = query.filter(Cve.cvss3 == None)
+                query = query.filter(Cve.cvss3 is None)
 
             if args.get("cvss").lower() == "low":
                 query = query.filter(and_(Cve.cvss3 >= 0.1, Cve.cvss3 <= 3.9))

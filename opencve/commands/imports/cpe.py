@@ -19,7 +19,7 @@ NVD_CPE_URL = (
 def get_slug(vendor, product=None):
     slug = vendor
     if product:
-        slug += "-{}".format(product)
+        slug += f"-{product}"
     return slug
 
 
@@ -30,7 +30,7 @@ def run(mappings):
     header("Importing CPE list...")
 
     # Download the XML file
-    with timed_operation("Downloading {}...".format(NVD_CPE_URL)):
+    with timed_operation(f"Downloading {NVD_CPE_URL}..."):
         resp = requests.get(NVD_CPE_URL).content
 
     # Parse the XML elements
@@ -65,8 +65,7 @@ def run(mappings):
         db.session.commit()
 
     info(
-        "{} vendors and {} products imported.".format(
-            len(mappings["vendors"]), len(mappings["products"])
-        )
+        f'{len(mappings["vendors"])} vendors and {len(mappings["products"])} products imported.'
     )
+
     del mappings

@@ -52,10 +52,11 @@ def test_filter_events_first_time(create_user, create_cve, create_vendor, open_f
     cve = create_cve("CVE-2018-18074")
     event = CveUtil.create_event(
         cve,
-        open_file(f"modified_cves/CVE-2018-18074_first_time_1.json")[0],
+        open_file("modified_cves/CVE-2018-18074_first_time_1.json")[0],
         "first_time",
         ["opencveio", "opencveio$PRODUCT$opencveio"],
     )
+
 
     # User1 doesn't have the first_time type
     user1 = create_user("user1")

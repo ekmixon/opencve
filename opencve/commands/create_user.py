@@ -39,4 +39,4 @@ def create_user(username, email, password, admin):
     except IntegrityError as e:
         error(e)
     else:
-        info("User {} created.".format(username))
+        info(f"User {username} created.")

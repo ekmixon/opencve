@@ -20,4 +20,4 @@ class Event(BaseModel):
     alerts = db.relationship("Alert", secondary=alerts_events)
 
     def __repr__(self):
-        return "<Event {}>".format(self.type)
+        return f"<Event {self.type}>"

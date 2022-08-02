@@ -22,20 +22,19 @@ logger = get_task_logger(__name__)
 
 
 def has_changed():
-    logger.info("Downloading {}...".format(NVD_MODIFIED_META_URL))
+    logger.info(f"Downloading {NVD_MODIFIED_META_URL}...")
     resp = requests.get(NVD_MODIFIED_META_URL)
     buf = BytesIO(resp.content).read().decode("utf-8")
 
     matches = re.match(r".*sha256:(\w{64}).*", buf, re.DOTALL)
-    nvd_sha256 = matches.group(1)
+    nvd_sha256 = matches[1]
     last_nvd256 = Meta.query.filter_by(name="nvd_last_sha256").first()
 
     if nvd_sha256 != last_nvd256.value:
         logger.info(
-            "Found different hashes (old:{}, new:{}).".format(
-                last_nvd256.value, nvd_sha256
-            )
+            f"Found different hashes (old:{last_nvd256.value}, new:{nvd_sha256})."
         )
+
         return last_nvd256, nvd_sha256
     else:
         logger.info("DB is up to date.")
@@ -43,11 +42,10 @@ def has_changed():
 
 
 def download_modified_items():
-    logger.info("Downloading {}...".format(NVD_MODIFIED_URL))
+    logger.info(f"Downloading {NVD_MODIFIED_URL}...")
     resp = requests.get(NVD_MODIFIED_URL).content
     raw = gzip.GzipFile(fileobj=BytesIO(resp)).read()
-    items = json.loads(raw.decode("utf-8"))["CVE_Items"]
-    return items
+    return json.loads(raw.decode("utf-8"))["CVE_Items"]
 
 
 def check_for_update(cve_json, task):
@@ -58,12 +56,11 @@ def check_for_update(cve_json, task):
     # A new CVE has been added
     if not cve_obj:
         cve_obj = CveUtil.create_cve(cve_json)
-        logger.info("{} created (ID: {})".format(cve_id, cve_obj.id))
+        logger.info(f"{cve_id} created (ID: {cve_obj.id})")
         events = [CveUtil.create_event(cve_obj, cve_json, "new_cve", {})]
 
-    # Existing CVE has changed
     elif CveUtil.cve_has_changed(cve_obj, cve_json):
-        logger.info("{} has changed, parsing it...".format(cve_obj.cve_id))
+        logger.info(f"{cve_obj.cve_id} has changed, parsing it...")
 
         events = []
         checks = BaseCheck.__subclasses__()
@@ -71,9 +68,7 @@ def check_for_update(cve_json, task):
         # Loop on each kind of check
         for check in checks:
             c = check(cve_obj, cve_json)
-            event = c.execute()
-
-            if event:
+            if event := c.execute():
                 events.append(event)
 
         # Change the last updated date
@@ -103,11 +98,11 @@ def handle_events():
     task = Task()
     db.session.add(task)
 
-    logger.info("Checking {} CVEs...".format(len(items)))
+    logger.info(f"Checking {len(items)} CVEs...")
     for item in items:
         check_for_update(item, task)
 
     logger.info("CVEs checked, updating meta hash...")
     current_sum.value = new_sum
     db.session.commit()
-    logger.info("Done, new meta is {}.".format(new_sum))
+    logger.info(f"Done, new meta is {new_sum}.")

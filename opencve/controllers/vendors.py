@@ -25,6 +25,6 @@ class VendorController(BaseController):
                 .replace("_", "")
                 .replace(" ", "_")
             )
-            query = query.filter(cls.model.name.like("%{}%".format(search)))
+            query = query.filter(cls.model.name.like(f"%{search}%"))
 
         return query, {}
